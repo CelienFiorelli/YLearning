@@ -39,9 +39,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(inversedBy: 'user')]
     private ?Persona $persona = null;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Ability::class)]
+    private Collection $abilities;
+
     public function __construct()
     {
-
+        $this->abilities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -146,6 +149,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPersona(?Persona $persona): static
     {
         $this->persona = $persona;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Ability>
+     */
+    public function getAbilities(): Collection
+    {
+        return $this->abilities;
+    }
+
+    public function addAbility(Ability $ability): static
+    {
+        if (!$this->abilities->contains($ability)) {
+            $this->abilities->add($ability);
+            $ability->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAbility(Ability $ability): static
+    {
+        if ($this->abilities->removeElement($ability)) {
+            // set the owning side to null (unless already changed)
+            if ($ability->getUser() === $this) {
+                $ability->setUser(null);
+            }
+        }
 
         return $this;
     }
