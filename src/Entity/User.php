@@ -42,9 +42,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Ability::class)]
     private Collection $abilities;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ChallengeComplete::class)]
+    private Collection $challengeCompletes;
+
     public function __construct()
     {
         $this->abilities = new ArrayCollection();
+        $this->challengeCompletes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -177,6 +181,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($ability->getUser() === $this) {
                 $ability->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ChallengeComplete>
+     */
+    public function getChallengeCompletes(): Collection
+    {
+        return $this->challengeCompletes;
+    }
+
+    public function addChallengeComplete(ChallengeComplete $challengeComplete): static
+    {
+        if (!$this->challengeCompletes->contains($challengeComplete)) {
+            $this->challengeCompletes->add($challengeComplete);
+            $challengeComplete->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChallengeComplete(ChallengeComplete $challengeComplete): static
+    {
+        if ($this->challengeCompletes->removeElement($challengeComplete)) {
+            // set the owning side to null (unless already changed)
+            if ($challengeComplete->getUser() === $this) {
+                $challengeComplete->setUser(null);
             }
         }
 

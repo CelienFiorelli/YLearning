@@ -2,28 +2,25 @@
 
 namespace App\Entity;
 
-use App\Repository\TechnologieRepository;
+use App\Repository\ChallengeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: TechnologieRepository::class)]
-class Technologie
+#[ORM\Entity(repositoryClass: ChallengeRepository::class)]
+class Challenge
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 64)]
-    private ?string $name = null;
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
 
-    #[ORM\Column]
-    private ?bool $isFramework = null;
-
-    #[ORM\Column]
-    private ?bool $isExecutable = null;
+    #[ORM\Column(nullable: true)]
+    private ?int $level = null;
 
     #[ORM\Column(length: 4)]
     private ?string $status = null;
@@ -34,12 +31,12 @@ class Technologie
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $updatedAt = null;
 
-    #[ORM\OneToMany(mappedBy: 'technologie', targetEntity: Course::class)]
-    private Collection $courses;
+    #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: ChallengeComplete::class)]
+    private Collection $challengeCompletes;
 
     public function __construct()
     {
-        $this->courses = new ArrayCollection();
+        $this->challengeCompletes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -47,38 +44,26 @@ class Technologie
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getDescription(): ?string
     {
-        return $this->name;
+        return $this->description;
     }
 
-    public function setName(string $name): static
+    public function setDescription(?string $description): static
     {
-        $this->name = $name;
+        $this->description = $description;
 
         return $this;
     }
 
-    public function isIsFramework(): ?bool
+    public function getLevel(): ?int
     {
-        return $this->isFramework;
+        return $this->level;
     }
 
-    public function setIsFramework(bool $isFramework): static
+    public function setLevel(?int $level): static
     {
-        $this->isFramework = $isFramework;
-
-        return $this;
-    }
-
-    public function isIsExecutable(): ?bool
-    {
-        return $this->isExecutable;
-    }
-
-    public function setIsExecutable(bool $isExecutable): static
-    {
-        $this->isExecutable = $isExecutable;
+        $this->level = $level;
 
         return $this;
     }
@@ -120,29 +105,29 @@ class Technologie
     }
 
     /**
-     * @return Collection<int, Course>
+     * @return Collection<int, ChallengeComplete>
      */
-    public function getCourses(): Collection
+    public function getChallengeCompletes(): Collection
     {
-        return $this->courses;
+        return $this->challengeCompletes;
     }
 
-    public function addCourse(Course $course): static
+    public function addChallengeComplete(ChallengeComplete $challengeComplete): static
     {
-        if (!$this->courses->contains($course)) {
-            $this->courses->add($course);
-            $course->setTechnologie($this);
+        if (!$this->challengeCompletes->contains($challengeComplete)) {
+            $this->challengeCompletes->add($challengeComplete);
+            $challengeComplete->setChallenge($this);
         }
 
         return $this;
     }
 
-    public function removeCourse(Course $course): static
+    public function removeChallengeComplete(ChallengeComplete $challengeComplete): static
     {
-        if ($this->courses->removeElement($course)) {
+        if ($this->challengeCompletes->removeElement($challengeComplete)) {
             // set the owning side to null (unless already changed)
-            if ($course->getTechnologie() === $this) {
-                $course->setTechnologie(null);
+            if ($challengeComplete->getChallenge() === $this) {
+                $challengeComplete->setChallenge(null);
             }
         }
 
