@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\SectionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -14,28 +15,52 @@ class Section
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    /**
+     * @Groups({"section"})
+     */
     private ?int $id = null;
 
     #[ORM\Column(length: 32)]
+    /**
+     * @Groups({"section"})
+     */
     private ?string $type = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    /**
+     * @Groups({"section"})
+     */
     private ?string $content = null;
 
     #[ORM\ManyToOne(inversedBy: 'sections')]
     #[ORM\JoinColumn(nullable: false)]
+    /**
+     * @Groups({"section"})
+     */
     private ?Course $course = null;
 
     #[ORM\Column(nullable: true)]
+    /**
+     * @Groups({"section"})
+     */
     private ?int $position = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    /**
+     * @Groups({"section"})
+     */
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    /**
+     * @Groups({"section"})
+     */
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'section', targetEntity: Response::class)]
+    /**
+     * @Groups({"section"})
+     */
     private Collection $responses;
 
     public function __construct()
