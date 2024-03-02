@@ -14,7 +14,7 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class TechnologieController extends AbstractController
 {
-    #[Route('/technologie', name: 'app_technologie')]
+    // #[Route('/technologie', name: 'app_technologie')]
     // public function index(): JsonResponse
     // {
     //     return $this->json([
