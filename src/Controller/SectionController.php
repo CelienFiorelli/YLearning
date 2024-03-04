@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Course;
 use App\Entity\Section;
+use OpenApi\Attributes as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use App\Repository\SectionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +19,8 @@ use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
+use function PHPSTORM_META\type;
+
 class SectionController extends AbstractController
 {
     #[Route('/section', name: 'app_section')]
@@ -28,6 +32,22 @@ class SectionController extends AbstractController
         ]);
     }
 
+    /**
+     * All Section
+     *
+     * @param SectionRepository $repository
+     * @param SerializerInterface $serializer
+     * @param TagAwareCacheInterface $cache
+     * @return JsonResponse
+     */
+    #[OA\Response(
+        response: 200,
+        description: "Retourne la liste de toute les sections",
+        content: new OA\JsonContent (
+            type: "array",
+            items: new OA\Items(ref: new Model(type:Section::class, groups: ["section"])),
+        )
+    )]
     #[Route('/api/section', name: 'section.all', methods: ['GET'])]
     public function getAll (SectionRepository $repository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
