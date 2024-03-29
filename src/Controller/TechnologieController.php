@@ -21,21 +21,21 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 class TechnologieController extends AbstractController
 {
     #[Route('/api/technologie', name: 'technologie.all', methods: ['GET'])]
-    public function getAll (TechnologieRepository $repository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
+    public function getAll(TechnologieRepository $repository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
         $cacheKey = "get:all:technologie";
-        $jsonTests = $cache->get($cacheKey, function (ItemInterface $item) use ($serializer, $repository) {
+        $json = $cache->get($cacheKey, function (ItemInterface $item) use ($serializer, $repository) {
             $item->tag('getAllTechnologieCache');
-            $tests = $repository->findBy(['status' => 'on']);
-            return $serializer->serialize($tests, 'json');
+            $technologies = $repository->findBy(['status' => 'on']);
+            return $serializer->serialize($technologies, 'json');
         });
         
-        return new JsonResponse($jsonTests, 200, [], true);
+        return new JsonResponse($json, 200, [], true);
     }
 
     #[Route('/api/technologie/{id}', name: 'technologie.show', methods: ['GET'])]
     #[ParamConverter("technologie")]
-    public function show (Technologie $technologie, SerializerInterface $serializer): JsonResponse
+    public function show(Technologie $technologie, SerializerInterface $serializer): JsonResponse
     {
         $json = $serializer->serialize($technologie, 'json');
 
