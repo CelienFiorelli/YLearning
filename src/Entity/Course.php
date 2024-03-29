@@ -4,10 +4,10 @@ namespace App\Entity;
 
 use App\Repository\CourseRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CourseRepository::class)]
 class Course
@@ -15,25 +15,32 @@ class Course
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["course"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["course"])]
     private ?string $title = null;
-    
+
     #[ORM\Column(nullable: true)]
+    #[Groups(["course"])]
     private ?int $level = null;
-    
+
     #[ORM\Column(length: 4)]
+    #[Groups(["course"])]
     private ?string $status = null;
 
     #[ORM\ManyToOne(inversedBy: 'courses')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["course"])]
     private ?Technologie $technologie = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(["course"])]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(["course"])]
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'course', targetEntity: Section::class)]

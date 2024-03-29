@@ -26,8 +26,8 @@ class CourseController extends AbstractController
         $cacheKey = "get:all:course";
         $json = $cache->get($cacheKey, function (ItemInterface $item) use ($serializer, $repository) {
             $item->tag('getAllCourseCache');
-            $courses = $repository->findBy(['status' => 'on']);
-            return $serializer->serialize($courses, 'json', ['groups' => 'course']);
+            $course = $repository->findBy(['status' => 'on']);
+            return $serializer->serialize($course, 'json', ['groups' => 'course']);
         });
 
         return new JsonResponse($json, 200, [], true);
@@ -82,9 +82,9 @@ class CourseController extends AbstractController
     }
 
     #[Route('/api/course/{id}', name: 'course.delete', methods: ['DELETE'])]
-    public function deleteCourse(Course $technologie, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function deleteCourse(Course $course, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
-        $entityManagerInterface->remove($technologie);
+        $entityManagerInterface->remove($course);
         $entityManagerInterface->flush();
         $cache->invalidateTags(['getAllCourseCache']);
 

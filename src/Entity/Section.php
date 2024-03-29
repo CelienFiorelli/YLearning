@@ -15,52 +15,36 @@ class Section
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    /**
-     * @Groups({"section"})
-     */
+    #[Groups(["section"])]
+
     private ?int $id = null;
 
     #[ORM\Column(length: 32)]
-    /**
-     * @Groups({"section"})
-     */
+    #[Groups(["section"])]
     private ?string $type = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    /**
-     * @Groups({"section"})
-     */
+    #[Groups(["section"])]
     private ?string $content = null;
 
     #[ORM\ManyToOne(inversedBy: 'sections')]
     #[ORM\JoinColumn(nullable: false)]
-    /**
-     * @Groups({"section"})
-     */
+    #[Groups(["section"])]
     private ?Course $course = null;
 
     #[ORM\Column(nullable: true)]
-    /**
-     * @Groups({"section"})
-     */
+    #[Groups(["section"])]
     private ?int $position = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    /**
-     * @Groups({"section"})
-     */
+    #[Groups(["section"])]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    /**
-     * @Groups({"section"})
-     */
+    #[Groups(["section"])]
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'section', targetEntity: Response::class)]
-    /**
-     * @Groups({"section"})
-     */
     private Collection $responses;
 
     public function __construct()
