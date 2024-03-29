@@ -15,23 +15,27 @@ class Technologie
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["userAbility"])]
+    #[Groups(["technologie", "userAbility"])]
     private ?int $id = null;
-
+    
     #[ORM\Column(length: 64)]
-    #[Groups(["userAbility"])]
+    #[Groups(["technologie", "userAbility"])]
     private ?string $name = null;
 
     #[ORM\Column]
+    #[Groups(["technologie", "userAbility"])]
     private ?bool $isFramework = null;
 
     #[ORM\Column]
+    #[Groups(["technologie"])]
     private ?bool $isExecutable = null;
 
     #[ORM\Column(length: 4)]
+    #[Groups(["technologie"])]
     private ?string $status = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]    
+    #[Groups(["technologie"])]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

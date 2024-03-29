@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ChallengeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -14,24 +15,45 @@ class Challenge
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    /**
+     * @Groups({"challenge"})
+     */
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    /**
+     * @Groups({"challenge"})
+     */
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
+    /**
+     * @Groups({"challenge"})
+     */
     private ?int $level = null;
 
     #[ORM\Column(length: 4)]
+    /**
+     * @Groups({"challenge"})
+     */
     private ?string $status = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    /**
+     * @Groups({"challenge"})
+     */
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    /**
+     * @Groups({"challenge"})
+     */
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: ChallengeComplete::class)]
+    /**
+     * @Groups({"challenge"})
+     */
     private Collection $challengeCompletes;
 
     public function __construct()

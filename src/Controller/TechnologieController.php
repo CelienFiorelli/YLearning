@@ -27,7 +27,7 @@ class TechnologieController extends AbstractController
         $json = $cache->get($cacheKey, function (ItemInterface $item) use ($serializer, $repository) {
             $item->tag('getAllTechnologieCache');
             $technologies = $repository->findBy(['status' => 'on']);
-            return $serializer->serialize($technologies, 'json');
+            return $serializer->serialize($technologies, 'json', ['groups' => 'technologie']);
         });
         
         return new JsonResponse($json, 200, [], true);
