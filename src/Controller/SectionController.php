@@ -26,7 +26,7 @@ class SectionController extends AbstractController
         $cacheKey = "get:all:section";
         $json = $cache->get($cacheKey, function (ItemInterface $item) use ($serializer, $repository) {
             $item->tag('getAllSectionCache');
-            $sections = $repository->findBy(['status' => 'on']);
+            $sections = $repository->findAll();
             return $serializer->serialize($sections, 'json', ['groups' => 'section']);
         });
         
