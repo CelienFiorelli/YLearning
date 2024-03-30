@@ -15,11 +15,11 @@ class Technologie
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["technologie", "userAbility"])]
+    #[Groups(["technologie", "userAbility", "challengeComplete", "userChallenge"])]
     private ?int $id = null;
     
     #[ORM\Column(length: 64)]
-    #[Groups(["technologie", "userAbility"])]
+    #[Groups(["technologie", "userAbility", "challengeComplete", "userChallenge"])]
     private ?string $name = null;
 
     #[ORM\Column]

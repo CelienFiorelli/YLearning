@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ChallengeCompleteRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ChallengeCompleteRepository::class)]
 class ChallengeComplete
@@ -12,20 +13,25 @@ class ChallengeComplete
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["challengeComplete", "userChallenge"])]
     private ?int $id = null;
-
+    
     #[ORM\ManyToOne(inversedBy: 'challengeCompletes')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["userChallenge"])]
     private ?Challenge $challenge = null;
 
-    #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $time = null;
+    #[ORM\Column(nullable: true)]
+    #[Groups(["challengeComplete", "userChallenge"])]
+    private ?\DateInterval $time = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(["challengeComplete", "userChallenge"])]
     private ?string $response = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["challengeComplete", "userChallenge"])]
     private ?Technologie $technologie = null;
 
     #[ORM\ManyToOne(inversedBy: 'challengeCompletes')]
@@ -58,12 +64,12 @@ class ChallengeComplete
         return $this;
     }
 
-    public function getTime(): ?\DateTimeInterface
+    public function getTime(): ?\DateInterval
     {
         return $this->time;
     }
 
-    public function setTime(?\DateTimeInterface $time): static
+    public function setTime(?\DateInterval $time): static
     {
         $this->time = $time;
 
