@@ -41,7 +41,7 @@ class ChallengeController extends AbstractController
     }
 
     #[Route('/api/challenge', name: 'challenge.create', methods: ['POST'])]
-    public function createCourse(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, UrlGeneratorInterface $urlGenerator, TagAwareCacheInterface $cache): JsonResponse
+    public function createChallenge(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, UrlGeneratorInterface $urlGenerator, TagAwareCacheInterface $cache): JsonResponse
     {
         $challenge = $serializer->deserialize($request->getContent(), Challenge::class, 'json');
         $date = new \DateTime();
@@ -61,7 +61,7 @@ class ChallengeController extends AbstractController
     }
 
     #[Route('api/challenge/{id}', name: 'challenge.update', methods: ['PUT'])]
-    public function updateSection(Challenge $challenge, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function updateChallenge(Challenge $challenge, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
         $challenge = $serializer->deserialize($request->getContent(), Challenge::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $challenge]);
         $date = new \DateTime();
@@ -74,7 +74,7 @@ class ChallengeController extends AbstractController
     }
 
     #[Route('/api/challenge/{id}', name: 'challenge.delete', methods: ['DELETE'])]
-    public function deleteSection(Challenge $challenge, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function deleteChallenge(Challenge $challenge, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
         $entityManagerInterface->remove($challenge);
         $entityManagerInterface->flush();

@@ -24,7 +24,7 @@ class AbilityController extends AbstractController
         $json = $cache->get($cacheKey, function (ItemInterface $item) use ($serializer, $repository) {
             $item->tag('getAllAbilityCache');
             $abilities = $repository->findAll();
-            return $serializer->serialize($abilities, 'json');
+            return $serializer->serialize($abilities, 'json', ['groups' => 'userAbility']);
         });
         
         return new JsonResponse($json, 200, [], true);
@@ -62,7 +62,7 @@ class AbilityController extends AbstractController
     }
 
     #[Route('/api/ability/{id}', name: 'ability.delete', methods: ['DELETE'])]
-    public function deleteTechnologie(Ability $ability, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function deleteAbility(Ability $ability, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
         $entityManagerInterface->remove($ability);
         $entityManagerInterface->flush();

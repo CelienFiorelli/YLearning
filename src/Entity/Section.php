@@ -15,7 +15,7 @@ class Section
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["section"])]
+    #[Groups(["section", "response"])]
 
     private ?int $id = null;
 
@@ -24,7 +24,7 @@ class Section
     private ?string $type = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(["section"])]
+    #[Groups(["section", "response"])]
     private ?string $content = null;
 
     #[ORM\ManyToOne(inversedBy: 'sections')]
