@@ -18,7 +18,7 @@ class ChallengeComplete
     
     #[ORM\ManyToOne(inversedBy: 'challengeCompletes')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["userChallenge"])]
+    #[Groups(["userChallenge", "review"])]
     private ?Challenge $challenge = null;
 
     #[ORM\Column(nullable: true)]

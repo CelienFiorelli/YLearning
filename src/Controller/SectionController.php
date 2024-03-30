@@ -35,8 +35,11 @@ class SectionController extends AbstractController
 
     #[Route('/api/section/{id}', name: 'section.show', methods: ['GET'])]
     #[ParamConverter("section")]
-    public function show(Section $section, SerializerInterface $serializer): JsonResponse
+    public function show(?Section $section, SerializerInterface $serializer): JsonResponse
     {
+        if (!$section) {
+            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
         $json = $serializer->serialize($section, 'json', ['groups' => 'section']);
 
         return new JsonResponse($json, 200, [], true);
@@ -69,8 +72,11 @@ class SectionController extends AbstractController
     }
 
     #[Route('api/section/{id}', name: 'section.update', methods: ['PUT'])]
-    public function updateSection(Section $section, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function updateSection(?Section $section, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
+        if (!$section) {
+            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
         $section = $serializer->deserialize($request->getContent(), Section::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $section]);
         $date = new \DateTime();
         $section->setUpdatedAt($date);
@@ -82,8 +88,11 @@ class SectionController extends AbstractController
     }
 
     #[Route('/api/section/{id}', name: 'section.delete', methods: ['DELETE'])]
-    public function deleteSection(Section $section, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function deleteSection(?Section $section, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
+        if (!$section) {
+            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
         $entityManagerInterface->remove($section);
         $entityManagerInterface->flush();
         $cache->invalidateTags(['getAllSectionCache']);

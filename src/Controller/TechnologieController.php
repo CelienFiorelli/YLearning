@@ -35,8 +35,11 @@ class TechnologieController extends AbstractController
 
     #[Route('/api/technologie/{id}', name: 'technologie.show', methods: ['GET'])]
     #[ParamConverter("technologie")]
-    public function show(Technologie $technologie, SerializerInterface $serializer): JsonResponse
+    public function show(?Technologie $technologie, SerializerInterface $serializer): JsonResponse
     {
+        if (!$technologie) {
+            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
         $json = $serializer->serialize($technologie, 'json');
 
         return new JsonResponse($json, 200, [], true);
@@ -59,8 +62,11 @@ class TechnologieController extends AbstractController
     }
 
     #[Route('api/technologie/{id}', name: 'technologie.update', methods: ['PUT'])]
-    public function updateTechnologie(Technologie $technologie, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function updateTechnologie(?Technologie $technologie, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
+        if (!$technologie) {
+            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
         $technologie = $serializer->deserialize($request->getContent(), Technologie::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $technologie]);
         $date = new \DateTime();
         $technologie->setUpdatedAt($date);
@@ -72,8 +78,11 @@ class TechnologieController extends AbstractController
     }
 
     #[Route('/api/technologie/{id}', name: 'technologie.delete', methods: ['DELETE'])]
-    public function deleteTechnologie(Technologie $technologie, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function deleteTechnologie(?Technologie $technologie, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
+        if (!$technologie) {
+            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
         $technologie->setStatus('off')->setUpdatedAt(new \DateTime());
         $entityManagerInterface->persist($technologie);
         $entityManagerInterface->flush();
