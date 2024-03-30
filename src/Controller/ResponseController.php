@@ -38,8 +38,7 @@ class ResponseController extends AbstractController
         $response = $serializer->deserialize($request->getContent(), EntityResponse::class, 'json');
         $date = new \DateTime();
         $body = $request->toArray();
-        $response->setContent($body['content'])
-            ->setIsValid(true)
+        $response->setIsValid(true)
             ->setCreatedAt($date)
             ->setUpdatedAt($date);
         $sectionId = $body['section'];
