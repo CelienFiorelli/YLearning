@@ -17,15 +17,6 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class AuthController extends AbstractController
 {
-    #[Route('/auth', name: 'app_auth')]
-    public function index(): JsonResponse
-    {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/AuthController.php',
-        ]);
-    }
-
     #[Route('/api/register', name: 'auth.register', methods: ['POST'])]
     public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $userPasswordHasher): JsonResponse
     {
@@ -52,5 +43,4 @@ class AuthController extends AbstractController
         
         return new JsonResponse(null, Response::HTTP_CREATED, [], true);
     }
-
 }
