@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\AbilityRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: AbilityRepository::class)]
 class Ability
@@ -12,9 +13,11 @@ class Ability
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["userAbility"])]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(["userAbility"])]
     private ?int $level = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -29,6 +32,7 @@ class Ability
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["userAbility"])]
     private ?Technologie $technologie = null;
 
     public function getId(): ?int

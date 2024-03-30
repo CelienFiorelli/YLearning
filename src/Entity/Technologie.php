@@ -5,9 +5,9 @@ namespace App\Entity;
 use App\Repository\TechnologieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TechnologieRepository::class)]
 class Technologie
@@ -15,15 +15,15 @@ class Technologie
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["technologie"])]
+    #[Groups(["technologie", "userAbility", "challengeComplete", "userChallenge"])]
     private ?int $id = null;
     
     #[ORM\Column(length: 64)]
-    #[Groups(["technologie"])]
+    #[Groups(["technologie", "userAbility", "challengeComplete", "userChallenge"])]
     private ?string $name = null;
 
     #[ORM\Column]
-    #[Groups(["technologie"])]
+    #[Groups(["technologie", "userAbility"])]
     private ?bool $isFramework = null;
 
     #[ORM\Column]
