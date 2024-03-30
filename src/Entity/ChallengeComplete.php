@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ChallengeCompleteRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ChallengeCompleteRepository::class)]
 class ChallengeComplete
@@ -13,9 +14,10 @@ class ChallengeComplete
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
+    
     #[ORM\ManyToOne(inversedBy: 'challengeCompletes')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["review"])]
     private ?Challenge $challenge = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
@@ -40,6 +42,8 @@ class ChallengeComplete
 
     #[ORM\OneToOne(mappedBy: 'challengeComplete', cascade: ['persist', 'remove'])]
     private ?ChallengeReview $challengeReview = null;
+    #[Groups(["revie"])]
+
 
     public function getId(): ?int
     {

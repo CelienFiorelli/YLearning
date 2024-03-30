@@ -62,8 +62,11 @@ class AbilityController extends AbstractController
     }
 
     #[Route('/api/ability/{id}', name: 'ability.delete', methods: ['DELETE'])]
-    public function deleteAbility(Ability $ability, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function deleteAbility(?Ability $ability, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
+        if (!$ability) {
+            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
         $entityManagerInterface->remove($ability);
         $entityManagerInterface->flush();
         $cache->invalidateTags(['getAllAbilityCache']);

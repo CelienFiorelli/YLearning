@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ChallengeReviewRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ChallengeReviewRepository::class)]
 class ChallengeReview
@@ -12,22 +13,28 @@ class ChallengeReview
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["review"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["review"])]
     private ?string $comment = null;
 
     #[ORM\Column]
+    #[Groups(["review"])]
     private ?bool $needRevaluation = null;
 
     #[ORM\OneToOne(inversedBy: 'challengeReview', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["review"])]
     private ?ChallengeComplete $challengeComplete = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(["review"])]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(["review"])]
     private ?\DateTimeInterface $updatedAt = null;
 
     public function getId(): ?int

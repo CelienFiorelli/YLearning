@@ -26,15 +26,18 @@ class ChallengeController extends AbstractController
         $json = $cache->get($cacheKey, function(ItemInterface $item) use ($serializer, $repository){
             $item->tag('getAllChallengeCache');
             $challenge = $repository->findBy(['status' => 'on']);
-            return $serializer->serialize($challenge, 'json', ['group' => 'challenge']);
+            return $serializer->serialize($challenge, 'json', ['groups' => 'challenge']);
         });
-        return new JsonResponse($json, 200, [], true);
+        return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
 
     #[Route('/api/challenge/{id}', name: 'challenge.show', methods: ['GET'])]
     #[ParamConverter("challenge")]
-    public function show(Challenge $challenge, SerializerInterface $serializer): JsonResponse
+    public function show(?Challenge $challenge, SerializerInterface $serializer): JsonResponse
     {
+        if (!$challenge) {
+            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
         $json = $serializer->serialize($challenge, 'json', ['groups' => 'challenge']);
 
         return new JsonResponse($json, 200, [], true);
@@ -54,15 +57,18 @@ class ChallengeController extends AbstractController
         $entityManagerInterface->persist($challenge);
         $entityManagerInterface->flush();
         $location = $urlGenerator->generate('challenge.all', ['id' => $challenge->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
-        $json = $serializer->serialize($challenge, 'json', ['groups' => 'course']);
+        $json = $serializer->serialize($challenge, 'json', ['groups' => 'challenge']);
         $cache->invalidateTags(['getAllChallengeCache']);
 
         return new JsonResponse($json, Response::HTTP_CREATED, ['Location' => $location], true);
     }
 
     #[Route('api/challenge/{id}', name: 'challenge.update', methods: ['PUT'])]
-    public function updateChallenge(Challenge $challenge, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function updateChallenge(?Challenge $challenge, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
+        if (!$challenge) {
+            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
         $challenge = $serializer->deserialize($request->getContent(), Challenge::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $challenge]);
         $date = new \DateTime();
         $challenge->setUpdatedAt($date);
@@ -74,8 +80,11 @@ class ChallengeController extends AbstractController
     }
 
     #[Route('/api/challenge/{id}', name: 'challenge.delete', methods: ['DELETE'])]
-    public function deleteChallenge(Challenge $challenge, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function deleteChallenge(?Challenge $challenge, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
+        if (!$challenge) {
+            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
         $entityManagerInterface->remove($challenge);
         $entityManagerInterface->flush();
         $cache->invalidateTags(['getAllChallengeCache']);

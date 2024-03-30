@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Section;
 use App\Entity\Technologie;
 use App\Repository\TechnologieRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,17 +28,19 @@ class TechnologieController extends AbstractController
             $technologies = $repository->findBy(['status' => 'on']);
             return $serializer->serialize($technologies, 'json', ['groups' => 'technologie']);
         });
-        
+
         return new JsonResponse($json, 200, [], true);
     }
 
     #[Route('/api/technologie/{id}', name: 'technologie.show', methods: ['GET'])]
     #[ParamConverter("technologie")]
-    public function show(Technologie $technologie, SerializerInterface $serializer): JsonResponse
+    public function show(?Technologie $technologie, SerializerInterface $serializer): JsonResponse
     {
-        $json = $serializer->serialize($technologie, 'json');
-
-        return new JsonResponse($json, 200, [], true);
+        if (!$technologie) {
+            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
+        $json = $serializer->serialize($technologie, 'json', ['groups' => 'technologie']);
+        return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
 
     #[Route('/api/technologie', name: 'technologie.create', methods: ['POST'])]
@@ -59,8 +60,11 @@ class TechnologieController extends AbstractController
     }
 
     #[Route('api/technologie/{id}', name: 'technologie.update', methods: ['PUT'])]
-    public function updateTechnologie(Technologie $technologie, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function updateTechnologie(?Technologie $technologie, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
+        if (!$technologie) {
+            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
         $technologie = $serializer->deserialize($request->getContent(), Technologie::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $technologie]);
         $date = new \DateTime();
         $technologie->setUpdatedAt($date);
@@ -72,8 +76,11 @@ class TechnologieController extends AbstractController
     }
 
     #[Route('/api/technologie/{id}', name: 'technologie.delete', methods: ['DELETE'])]
-    public function deleteTechnologie(Technologie $technologie, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function deleteTechnologie(?Technologie $technologie, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
+        if (!$technologie) {
+            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
         $technologie->setStatus('off')->setUpdatedAt(new \DateTime());
         $entityManagerInterface->persist($technologie);
         $entityManagerInterface->flush();
@@ -81,5 +88,4 @@ class TechnologieController extends AbstractController
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
-
 }

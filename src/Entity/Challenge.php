@@ -15,45 +15,31 @@ class Challenge
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    /**
-     * @Groups({"challenge"})
-     */
+    #[Groups(["challenge", "review"])]
+
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    /**
-     * @Groups({"challenge"})
-     */
+    #[Groups(["challenge"])]
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
-    /**
-     * @Groups({"challenge"})
-     */
+    #[Groups(["challenge"])]
     private ?int $level = null;
 
     #[ORM\Column(length: 4)]
-    /**
-     * @Groups({"challenge"})
-     */
+    #[Groups(["challenge"])]
     private ?string $status = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    /**
-     * @Groups({"challenge"})
-     */
+    #[Groups(["challenge"])]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    /**
-     * @Groups({"challenge"})
-     */
+    #[Groups(["challenge"])]
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: ChallengeComplete::class)]
-    /**
-     * @Groups({"challenge"})
-     */
     private Collection $challengeCompletes;
 
     public function __construct()

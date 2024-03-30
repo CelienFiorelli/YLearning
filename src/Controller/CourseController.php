@@ -35,8 +35,11 @@ class CourseController extends AbstractController
 
     #[Route('/api/course/{id}', name: 'course.show', methods: ['GET'])]
     #[ParamConverter("course")]
-    public function show(Course $course, SerializerInterface $serializer): JsonResponse
+    public function show(?Course $course, SerializerInterface $serializer): JsonResponse
     {
+        if (!$course) {
+            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
         $json = $serializer->serialize($course, 'json', ['groups' => 'course']);
 
         return new JsonResponse($json, 200, [], true);
@@ -69,8 +72,11 @@ class CourseController extends AbstractController
     }
 
     #[Route('api/course/{id}', name: 'course.update', methods: ['PUT'])]
-    public function updateCourse(Course $course, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function updateCourse(?Course $course, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
+        if (!$course) {
+            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
         $course = $serializer->deserialize($request->getContent(), Course::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $course]);
         $date = new \DateTime();
         $course->setUpdatedAt($date);
@@ -82,8 +88,11 @@ class CourseController extends AbstractController
     }
 
     #[Route('/api/course/{id}', name: 'course.delete', methods: ['DELETE'])]
-    public function deleteCourse(Course $course, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function deleteCourse(?Course $course, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
+        if (!$course) {
+            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
         $entityManagerInterface->remove($course);
         $entityManagerInterface->flush();
         $cache->invalidateTags(['getAllCourseCache']);
