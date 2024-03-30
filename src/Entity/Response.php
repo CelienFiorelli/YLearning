@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ResponseRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ResponseRepository::class)]
 class Response
@@ -12,22 +13,28 @@ class Response
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["response"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 128)]
+    #[Groups(["response"])]
     private ?string $content = null;
 
     #[ORM\Column]
+    #[Groups(["response"])]
     private ?bool $isValid = null;
 
     #[ORM\ManyToOne(inversedBy: 'responses')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["response"])]
     private ?Section $section = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(["response"])]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(["response"])]
     private ?\DateTimeInterface $updatedAt = null;
 
     public function getId(): ?int
