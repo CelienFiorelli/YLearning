@@ -26,7 +26,7 @@ class ResponseController extends AbstractController
         $json = $cache->get($cacheKey, function (ItemInterface $item) use ($serializer, $repository) {
             $item->tag('getAllResponseCache');
             $response = $repository->findBy(['isValid' => 'true']);
-            return $serializer->serialize($response, 'json', ['groups' => 'response', 'section']);
+            return $serializer->serialize($response, 'json', ['groups' => 'response']);
         });
 
         return new JsonResponse($json, 200, [], true);
@@ -57,8 +57,11 @@ class ResponseController extends AbstractController
     }
 
     #[Route('api/response/{id}', name: 'response.update', methods: ['PUT'])]
-    public function updateResponse(EntityResponse $response, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function updateResponse(?EntityResponse $response, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
+        if (!$response) {
+            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
         $response = $serializer->deserialize($request->getContent(), EntityResponse::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $response]);
         $date = new \DateTime();
         $response->setUpdatedAt($date);
@@ -70,8 +73,11 @@ class ResponseController extends AbstractController
     }
 
     #[Route('/api/response/{id}', name: 'response.delete', methods: ['DELETE'])]
-    public function deleteResponse(EntityResponse $response, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function deleteResponse(?EntityResponse $response, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
+        if (!$response) {
+            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
         $entityManagerInterface->remove($response);
         $entityManagerInterface->flush();
         $cache->invalidateTags(['getAllResponseCache']);
