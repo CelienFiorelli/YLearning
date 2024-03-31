@@ -45,7 +45,7 @@ class SectionController extends AbstractController
         return new JsonResponse($json, 200, [], true);
     }
 
-    #[Route('/api/section', name: 'create.section', methods: ['POST'])]
+    #[Route('/api/section', name: 'section.create', methods: ['POST'])]
     public function createSection(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, UrlGeneratorInterface $urlGenerator, TagAwareCacheInterface $cache): JsonResponse
     {
         $section = $serializer->deserialize($request->getContent(), Section::class, 'json');
