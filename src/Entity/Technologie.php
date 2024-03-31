@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TechnologieRepository::class)]
 class Technologie
@@ -20,14 +21,20 @@ class Technologie
     
     #[ORM\Column(length: 64)]
     #[Groups(["technologie", "userAbility", "challengeComplete", "userChallenge"])]
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
     private ?string $name = null;
 
     #[ORM\Column]
     #[Groups(["technologie", "userAbility"])]
+    #[Assert\NotBlank]
+    #[Assert\Type('boolean')]
     private ?bool $isFramework = null;
 
     #[ORM\Column]
     #[Groups(["technologie"])]
+    #[Assert\NotBlank]
+    #[Assert\Type('boolean')]
     private ?bool $isExecutable = null;
 
     #[ORM\Column(length: 4)]

@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
@@ -33,9 +34,14 @@ class ResponseController extends AbstractController
     }
 
     #[Route('/api/response', name: 'response.create', methods: ['POST'])]
-    public function createResponse(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, UrlGeneratorInterface $urlGenerator, TagAwareCacheInterface $cache): JsonResponse
+    public function createResponse(Request $request, ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, UrlGeneratorInterface $urlGenerator, TagAwareCacheInterface $cache): JsonResponse
     {
         $response = $serializer->deserialize($request->getContent(), EntityResponse::class, 'json');
+        $errors = $validator->validate($response);
+        if ($errors->count()) {
+            return new JsonResponse($serializer->serialize($errors, 'json'), Response::HTTP_UNPROCESSABLE_ENTITY, [], true);
+        }
+
         $date = new \DateTime();
         $body = $request->toArray();
         $response->setIsValid(true)
@@ -57,12 +63,14 @@ class ResponseController extends AbstractController
     }
 
     #[Route('api/response/{id}', name: 'response.update', methods: ['PUT'])]
-    public function updateResponse(?EntityResponse $response, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function updateResponse(EntityResponse $response, Request $request, ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
-        if (!$response) {
-            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
-        }
         $response = $serializer->deserialize($request->getContent(), EntityResponse::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $response]);
+        $errors = $validator->validate($response);
+        if ($errors->count()) {
+            return new JsonResponse($serializer->serialize($errors, 'json'), Response::HTTP_UNPROCESSABLE_ENTITY, [], true);
+        }
+
         $date = new \DateTime();
         $response->setUpdatedAt($date);
         $entityManagerInterface->persist($response);
@@ -73,11 +81,8 @@ class ResponseController extends AbstractController
     }
 
     #[Route('/api/response/{id}', name: 'response.delete', methods: ['DELETE'])]
-    public function deleteResponse(?EntityResponse $response, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function deleteResponse(EntityResponse $response, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
-        if (!$response) {
-            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
-        }
         $entityManagerInterface->remove($response);
         $entityManagerInterface->flush();
         $cache->invalidateTags(['getAllResponseCache']);

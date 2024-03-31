@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ChallengeRepository::class)]
 class Challenge
@@ -20,10 +21,12 @@ class Challenge
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Groups(["challenge", "userChallenge"])]
+    #[Assert\NotBlank]
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
     #[Groups(["challenge", "userChallenge"])]
+    #[Assert\Range(min: 0, max: 5)]
     private ?int $level = null;
 
     #[ORM\Column(length: 4)]

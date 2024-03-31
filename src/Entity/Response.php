@@ -6,6 +6,7 @@ use App\Repository\ResponseRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ResponseRepository::class)]
 class Response
@@ -18,15 +19,20 @@ class Response
 
     #[ORM\Column(length: 128)]
     #[Groups(["response"])]
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
     private ?string $content = null;
 
     #[ORM\Column]
     #[Groups(["response"])]
+    #[Assert\NotBlank]
+    #[Assert\Type('boolean')]
     private ?bool $isValid = null;
 
     #[ORM\ManyToOne(inversedBy: 'responses')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(["response"])]
+    #[Assert\NotBlank]
     private ?Section $section = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

@@ -6,6 +6,7 @@ use App\Repository\AbilityRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AbilityRepository::class)]
 class Ability
@@ -18,6 +19,7 @@ class Ability
 
     #[ORM\Column]
     #[Groups(["userAbility"])]
+    #[Assert\Range(min: 0, max: 5)]
     private ?int $level = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

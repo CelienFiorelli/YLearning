@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
@@ -29,26 +30,28 @@ class TechnologieController extends AbstractController
             $technologies = $repository->findBy(['status' => 'on']);
             return $serializer->serialize($technologies, 'json', ['groups' => 'technologie']);
         });
-        
+
         return new JsonResponse($json, 200, [], true);
     }
 
     #[Route('/api/technologie/{id}', name: 'technologie.show', methods: ['GET'])]
     #[ParamConverter("technologie")]
-    public function show(?Technologie $technologie, SerializerInterface $serializer): JsonResponse
+    public function show(Technologie $technologie, SerializerInterface $serializer): JsonResponse
     {
-        if (!$technologie) {
-            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
-        }
-        $json = $serializer->serialize($technologie, 'json');
+        $json = $serializer->serialize($technologie, 'json', ['groups' => 'technologie']);
 
         return new JsonResponse($json, 200, [], true);
     }
 
     #[Route('/api/technologie', name: 'technologie.create', methods: ['POST'])]
-    public function createTechnologie(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, UrlGeneratorInterface $urlGenerator, TagAwareCacheInterface $cache): JsonResponse
+    public function createTechnologie(Request $request, ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, UrlGeneratorInterface $urlGenerator, TagAwareCacheInterface $cache): JsonResponse
     {
         $technologie = $serializer->deserialize($request->getContent(), Technologie::class, 'json');
+        $errors = $validator->validate($technologie);
+        if ($errors->count()) {
+            return new JsonResponse($serializer->serialize($errors, 'json'), Response::HTTP_UNPROCESSABLE_ENTITY, [], true);
+        }
+
         $date = new \DateTime();
         $technologie->setStatus('on')->setCreatedAt($date)->setUpdatedAt($date);
 
@@ -62,12 +65,14 @@ class TechnologieController extends AbstractController
     }
 
     #[Route('api/technologie/{id}', name: 'technologie.update', methods: ['PUT'])]
-    public function updateTechnologie(?Technologie $technologie, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function updateTechnologie(Technologie $technologie, Request $request, ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
-        if (!$technologie) {
-            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
-        }
         $technologie = $serializer->deserialize($request->getContent(), Technologie::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $technologie]);
+        $errors = $validator->validate($technologie);
+        if ($errors->count()) {
+            return new JsonResponse($serializer->serialize($errors, 'json'), Response::HTTP_UNPROCESSABLE_ENTITY, [], true);
+        }
+
         $date = new \DateTime();
         $technologie->setUpdatedAt($date);
         $entityManagerInterface->persist($technologie);
@@ -78,11 +83,8 @@ class TechnologieController extends AbstractController
     }
 
     #[Route('/api/technologie/{id}', name: 'technologie.delete', methods: ['DELETE'])]
-    public function deleteTechnologie(?Technologie $technologie, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function deleteTechnologie(Technologie $technologie, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
-        if (!$technologie) {
-            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
-        }
         $technologie->setStatus('off')->setUpdatedAt(new \DateTime());
         $entityManagerInterface->persist($technologie);
         $entityManagerInterface->flush();
@@ -90,5 +92,4 @@ class TechnologieController extends AbstractController
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
-
 }

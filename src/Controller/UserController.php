@@ -19,7 +19,7 @@ class UserController extends AbstractController
     {
         $abilities = $user->getAbilities();
         $json = $serializer->serialize($abilities, 'json', ['groups' => 'userAbility']);
-        
+
         return new JsonResponse($json, 200, [], true);
     }
 
@@ -29,7 +29,7 @@ class UserController extends AbstractController
     {
         $challenges = $user->getChallengeCompletes();
         $json = $serializer->serialize($challenges, 'json', ['groups' => 'userChallenge']);
-        
+
         return new JsonResponse($json, 200, [], true);
     }
 }

@@ -22,13 +22,13 @@ class AuthController extends AbstractController
     {
         $dateNow = new DateTime();
         $body = $request->toArray();
-        
+
         $persona = new Persona();
         $persona->setPhone($body['phone']);
         $persona->setEmail($body['email']);
         $persona->setCreatedAt($dateNow)->setUpdatedAt($dateNow);
         $persona->setStatus('on');
-        
+
         $manager->persist($persona);
 
         $user = new User();
@@ -38,9 +38,9 @@ class AuthController extends AbstractController
         $user->setPersona($persona);
         $user->setCreatedAt($dateNow)->setUpdatedAt($dateNow);
         $manager->persist($user);
-        
+
         $manager->flush();
-        
+
         return new JsonResponse(null, Response::HTTP_CREATED, [], true);
     }
 }

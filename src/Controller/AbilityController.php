@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
@@ -26,14 +27,17 @@ class AbilityController extends AbstractController
             $abilities = $repository->findAll();
             return $serializer->serialize($abilities, 'json', ['groups' => 'userAbility']);
         });
-        
+
         return new JsonResponse($json, 200, [], true);
     }
 
     #[Route('/api/ability', name: 'ability.createOrUpdate', methods: ['POST'])]
-    public function createAbility(Request $request, AbilityRepository $repository, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function createAbility(Request $request, ValidatorInterface $validator, AbilityRepository $repository, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
         $body = $request->toArray();
+        if (!isset($body['level']) || !isset($body['technologie'])) {
+            return new JsonResponse(['error' => 'required field is empty'], Response::HTTP_BAD_REQUEST);
+        }
         $technologie = $entityManagerInterface->getRepository(Technologie::class)->find($body['technologie']);
         if (!$technologie) {
             return new JsonResponse(['error' => 'Technologie not found'], Response::HTTP_BAD_REQUEST);
@@ -45,14 +49,19 @@ class AbilityController extends AbstractController
             $ability->setLevel($body['level']);
         } else {
             $ability = $serializer->deserialize($request->getContent(), Ability::class, 'json');
-    
+
             $user = $this->getUser();
             $ability->setUser($user);
             $ability->setTechnologie($technologie);
             $ability->setCreatedAt($date);
         }
-        
+
         $ability->setUpdatedAt($date);
+
+        $errors = $validator->validate($ability);
+        if ($errors->count()) {
+            return new JsonResponse($serializer->serialize($errors, 'json'), Response::HTTP_UNPROCESSABLE_ENTITY, [], true);
+        }
 
         $entityManagerInterface->persist($ability);
         $entityManagerInterface->flush();
@@ -62,16 +71,12 @@ class AbilityController extends AbstractController
     }
 
     #[Route('/api/ability/{id}', name: 'ability.delete', methods: ['DELETE'])]
-    public function deleteAbility(?Ability $ability, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function deleteAbility(Ability $ability, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
-        if (!$ability) {
-            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
-        }
         $entityManagerInterface->remove($ability);
         $entityManagerInterface->flush();
         $cache->invalidateTags(['getAllAbilityCache']);
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
-
 }

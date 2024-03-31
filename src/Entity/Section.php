@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SectionRepository::class)]
 class Section
@@ -21,19 +22,26 @@ class Section
 
     #[ORM\Column(length: 32)]
     #[Groups(["section"])]
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
     private ?string $type = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Groups(["section", "response"])]
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
     private ?string $content = null;
 
     #[ORM\ManyToOne(inversedBy: 'sections')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(["section"])]
+    #[Assert\NotBlank]
     private ?Course $course = null;
 
     #[ORM\Column(nullable: true)]
     #[Groups(["section"])]
+    #[Assert\NotBlank]
+    #[Assert\Type('integer')]
     private ?int $position = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

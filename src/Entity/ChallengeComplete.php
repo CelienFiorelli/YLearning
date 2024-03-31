@@ -6,6 +6,7 @@ use App\Repository\ChallengeCompleteRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ChallengeCompleteRepository::class)]
 class ChallengeComplete
@@ -19,6 +20,7 @@ class ChallengeComplete
     #[ORM\ManyToOne(inversedBy: 'challengeCompletes')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(["userChallenge", "review"])]
+    #[Assert\NotBlank]
     private ?Challenge $challenge = null;
 
     #[ORM\Column(nullable: true)]
@@ -32,6 +34,7 @@ class ChallengeComplete
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(["challengeComplete", "userChallenge"])]
+    #[Assert\NotBlank]
     private ?Technologie $technologie = null;
 
     #[ORM\ManyToOne(inversedBy: 'challengeCompletes')]
