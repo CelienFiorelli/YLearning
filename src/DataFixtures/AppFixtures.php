@@ -23,11 +23,12 @@ class AppFixtures extends Fixture
     private Generator $faker;
     private $userPasswordHasher;
 
-    public function __construct(UserPasswordHasherInterface $userPasswordHasher) {
+    public function __construct(UserPasswordHasherInterface $userPasswordHasher)
+    {
         $this->faker = Factory::create('fr_FR');
         $this->userPasswordHasher = $userPasswordHasher;
     }
-    
+
     public function load(ObjectManager $manager): void
     {
         $date = new \DateTime();
@@ -38,7 +39,7 @@ class AppFixtures extends Fixture
             ['Python', true, false]
         ];
         $technologies = [];
-        foreach($technologiesData as $technologieData) {
+        foreach ($technologiesData as $technologieData) {
             $technologie = new Technologie();
             $technologie->setName($technologieData[0])
                 ->setIsExecutable($technologieData[1])->setIsFramework($technologieData[2])
@@ -47,9 +48,9 @@ class AppFixtures extends Fixture
             $manager->persist($technologie);
             $technologies[] = $technologie;
         }
-        
+
         $users = [];
-        for ($i=0; $i < 10; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $persona = new Persona();
             $created = $this->faker->dateTimeBetween("-1 week", "now");
             $updated = $this->faker->dateTimeBetween($created, "now");
@@ -58,7 +59,7 @@ class AppFixtures extends Fixture
                 ->setStatus("on")
                 ->setCreatedAt($created)
                 ->setUpdatedAt($updated);
-            
+
             $manager->persist($persona);
 
             $user = new User();
@@ -83,11 +84,11 @@ class AppFixtures extends Fixture
             $users[] = $user;
             $manager->persist($user);
         }
-        
+
 
         $date = new \DateTime();
         $courses = [];
-        for ($i=0; $i < 5; $i++) {
+        for ($i = 0; $i < 5; $i++) {
             $course = new Course();
             $technologie = $technologies[random_int(0, count($technologies) - 1)];
             $course->setTitle('Apprendre le ' . $technologie->getName() . ' partie ' . $i)
@@ -101,7 +102,7 @@ class AppFixtures extends Fixture
         $sections = [];
         foreach ($courses as $course) {
             $sectionNumber = random_int(2, 6);
-            for ($i=1; $i < $sectionNumber; $i++) {
+            for ($i = 1; $i < $sectionNumber; $i++) {
                 $section = new Section();
                 $section->setType('text')->setPosition($i)->setContent($this->faker->sentence(random_int(40, 200)))
                     ->setCreatedAt($date)->setUpdatedAt($date);
@@ -115,7 +116,7 @@ class AppFixtures extends Fixture
         foreach ($sections as $section) {
             if (random_int(0, 4)) {
                 $validIndex = random_int(1, 4);
-                for ($i=1; $i <= 4; $i++) {
+                for ($i = 1; $i <= 4; $i++) {
                     $res = new Response();
                     $res->setContent($this->faker->sentence(random_int(3, 8)) . ($i === $validIndex ? '(vrai)' : '(faux)'))
                         ->setIsValid($i === $validIndex)->setCreatedAt($date)->setUpdatedAt($date);
@@ -127,7 +128,7 @@ class AppFixtures extends Fixture
         }
 
         $challenges = [];
-        for ($i=0; $i < 6; $i++) {
+        for ($i = 0; $i < 6; $i++) {
             $challenge = new Challenge();
             $challenge->setDescription($this->faker->sentence(random_int(40, 200)))->setLevel(random_int(1, 5))
                 ->setStatus('on')
@@ -136,7 +137,7 @@ class AppFixtures extends Fixture
             $manager->persist($challenge);
         }
 
-        for ($i=0; $i < 15; $i++) { 
+        for ($i = 0; $i < 15; $i++) {
             $challengeComplete = new ChallengeComplete();
             $challengeComplete->setResponse($this->faker->sentence(random_int(40, 200)))
                 ->setCreatedAt($date)->setUpdatedAt($date);

@@ -26,7 +26,7 @@ class AbilityController extends AbstractController
             $abilities = $repository->findAll();
             return $serializer->serialize($abilities, 'json', ['groups' => 'userAbility']);
         });
-        
+
         return new JsonResponse($json, 200, [], true);
     }
 
@@ -45,13 +45,13 @@ class AbilityController extends AbstractController
             $ability->setLevel($body['level']);
         } else {
             $ability = $serializer->deserialize($request->getContent(), Ability::class, 'json');
-    
+
             $user = $this->getUser();
             $ability->setUser($user);
             $ability->setTechnologie($technologie);
             $ability->setCreatedAt($date);
         }
-        
+
         $ability->setUpdatedAt($date);
 
         $entityManagerInterface->persist($ability);
@@ -73,5 +73,4 @@ class AbilityController extends AbstractController
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
-
 }

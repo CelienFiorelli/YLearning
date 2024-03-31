@@ -45,7 +45,7 @@ class CourseController extends AbstractController
         return new JsonResponse($json, 200, [], true);
     }
 
-    #[Route('/api/course', name: 'create.course', methods: ['POST'])]
+    #[Route('/api/course', name: 'course.create', methods: ['POST'])]
     public function createCourse(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, UrlGeneratorInterface $urlGenerator, TagAwareCacheInterface $cache): JsonResponse
     {
         $course = $serializer->deserialize($request->getContent(), Course::class, 'json');

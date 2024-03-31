@@ -29,7 +29,7 @@ class TechnologieController extends AbstractController
             $technologies = $repository->findBy(['status' => 'on']);
             return $serializer->serialize($technologies, 'json', ['groups' => 'technologie']);
         });
-        
+
         return new JsonResponse($json, 200, [], true);
     }
 
@@ -90,5 +90,4 @@ class TechnologieController extends AbstractController
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
-
 }

@@ -29,7 +29,7 @@ class SectionController extends AbstractController
             $sections = $repository->findAll();
             return $serializer->serialize($sections, 'json', ['groups' => 'section']);
         });
-        
+
         return new JsonResponse($json, 200, [], true);
     }
 
@@ -99,5 +99,4 @@ class SectionController extends AbstractController
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
-
 }

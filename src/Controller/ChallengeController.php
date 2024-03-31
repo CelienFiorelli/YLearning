@@ -23,7 +23,7 @@ class ChallengeController extends AbstractController
     public function getAll(ChallengeRepository $repository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
         $cacheKey = "get:all:challenge";
-        $json = $cache->get($cacheKey, function(ItemInterface $item) use ($serializer, $repository){
+        $json = $cache->get($cacheKey, function (ItemInterface $item) use ($serializer, $repository) {
             $item->tag('getAllChallengeCache');
             $challenge = $repository->findBy(['status' => 'on']);
             return $serializer->serialize($challenge, 'json', ['groups' => 'challenge']);

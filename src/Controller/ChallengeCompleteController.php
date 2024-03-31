@@ -30,7 +30,7 @@ class ChallengeCompleteController extends AbstractController
             $challengesComplete = $repository->findAll();
             return $serializer->serialize($challengesComplete, 'json', ['groups' => 'challengeComplete']);
         });
-        
+
         return new JsonResponse($json, 200, [], true);
     }
 
