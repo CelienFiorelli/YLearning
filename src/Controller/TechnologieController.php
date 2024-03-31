@@ -38,7 +38,7 @@ class TechnologieController extends AbstractController
     #[ParamConverter("technologie")]
     public function show(Technologie $technologie, SerializerInterface $serializer): JsonResponse
     {
-        $json = $serializer->serialize($technologie, 'json');
+        $json = $serializer->serialize($technologie, 'json', ['groups' => 'technologie']);
 
         return new JsonResponse($json, 200, [], true);
     }

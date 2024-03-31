@@ -19,7 +19,7 @@ class ExceptionSubscriber implements EventSubscriberInterface
         if ($exception instanceof NotFoundHttpException) {
             $data = [
                 'status' => Response::HTTP_NOT_FOUND,
-                'message' => 'Entity not found',
+                'message' => 'Not found',
             ];
             $event->setResponse(new JsonResponse($data));
             return;
