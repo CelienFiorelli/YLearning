@@ -32,7 +32,7 @@ class ChallengeReviewController extends AbstractController
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/api/review/{id}', name: 'challenge.show', methods: ['GET'])]
+    #[Route('/api/review/{id}', name: 'review.show', methods: ['GET'])]
     #[ParamConverter("challenge")]
     public function show(?ChallengeReview $review, SerializerInterface $serializer): JsonResponse
     {
@@ -45,10 +45,10 @@ class ChallengeReviewController extends AbstractController
     }
 
 
-    #[Route('/api/challenge/{id}/review', name: 'challenge.review', methods: ['GET'])]
+    #[Route('/api/challenge/{id}/review', name: 'review.challenge', methods: ['GET'])]
     public function reviewByChallenge(int $id, ChallengeReviewRepository $repository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
-        $cacheKey = "get:challenge:review_" . $id;
+        $cacheKey = "get:challenge:review:" . $id;
         $json = $cache->get($cacheKey, function (ItemInterface $item) use ($serializer, $repository, $id) {
             $item->tag(['getReviewCache']);
 
