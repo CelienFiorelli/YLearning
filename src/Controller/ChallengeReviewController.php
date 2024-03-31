@@ -34,16 +34,12 @@ class ChallengeReviewController extends AbstractController
 
     #[Route('/api/review/{id}', name: 'review.show', methods: ['GET'])]
     #[ParamConverter("challenge")]
-    public function show(?ChallengeReview $review, SerializerInterface $serializer): JsonResponse
+    public function show(ChallengeReview $review, SerializerInterface $serializer): JsonResponse
     {
-        if (!$review) {
-            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
-        }
         $json = $serializer->serialize($review, 'json', ['groups' => 'review']);
 
         return new JsonResponse($json, 200, [], true);
     }
-
 
     #[Route('/api/challenge/{id}/review', name: 'review.challenge', methods: ['GET'])]
     public function reviewByChallenge(int $id, ChallengeReviewRepository $repository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
@@ -67,14 +63,12 @@ class ChallengeReviewController extends AbstractController
     }
 
     #[Route('api/review/{id}', name: 'review.update', methods: ['PUT'])]
-    public function updateCourse(?ChallengeReview $review, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function updateCourse(ChallengeReview $review, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
-        if (!$review) {
-            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
-        }
-        $course = $serializer->deserialize($request->getContent(), ChallengeReview::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $review]);
+        $challengeReview = $serializer->deserialize($request->getContent(), ChallengeReview::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $review]);
+
         $date = new \DateTime();
-        $course->setUpdatedAt($date);
+        $challengeReview->setUpdatedAt($date);
         $entityManagerInterface->persist($review);
         $entityManagerInterface->flush();
         $cache->invalidateTags(['getAllReviewCache']);
@@ -83,11 +77,8 @@ class ChallengeReviewController extends AbstractController
     }
 
     #[Route('/api/review/{id}', name: 'review.delete', methods: ['DELETE'])]
-    public function deleteCourse(?ChallengeReview $review, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function deleteCourse(ChallengeReview $review, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
-        if (!$review) {
-            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
-        }
         $entityManagerInterface->remove($review);
         $entityManagerInterface->flush();
         $cache->invalidateTags(['getAllReviewCache']);

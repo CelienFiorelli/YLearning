@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
@@ -35,20 +36,22 @@ class CourseController extends AbstractController
 
     #[Route('/api/course/{id}', name: 'course.show', methods: ['GET'])]
     #[ParamConverter("course")]
-    public function show(?Course $course, SerializerInterface $serializer): JsonResponse
+    public function show(Course $course, SerializerInterface $serializer): JsonResponse
     {
-        if (!$course) {
-            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
-        }
         $json = $serializer->serialize($course, 'json', ['groups' => 'course']);
 
         return new JsonResponse($json, 200, [], true);
     }
 
     #[Route('/api/course', name: 'course.create', methods: ['POST'])]
-    public function createCourse(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, UrlGeneratorInterface $urlGenerator, TagAwareCacheInterface $cache): JsonResponse
+    public function createCourse(Request $request, ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, UrlGeneratorInterface $urlGenerator, TagAwareCacheInterface $cache): JsonResponse
     {
         $course = $serializer->deserialize($request->getContent(), Course::class, 'json');
+        $errors = $validator->validate($course);
+        if ($errors->count()) {
+            return new JsonResponse($serializer->serialize($errors, 'json'), Response::HTTP_UNPROCESSABLE_ENTITY, [], true);
+        }
+
         $date = new \DateTime();
         $body = $request->toArray();
         $course->setTitle($body['title'])
@@ -72,12 +75,14 @@ class CourseController extends AbstractController
     }
 
     #[Route('api/course/{id}', name: 'course.update', methods: ['PUT'])]
-    public function updateCourse(?Course $course, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function updateCourse(Course $course, Request $request, ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
-        if (!$course) {
-            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
-        }
         $course = $serializer->deserialize($request->getContent(), Course::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $course]);
+        $errors = $validator->validate($course);
+        if ($errors->count()) {
+            return new JsonResponse($serializer->serialize($errors, 'json'), Response::HTTP_UNPROCESSABLE_ENTITY, [], true);
+        }
+
         $date = new \DateTime();
         $course->setUpdatedAt($date);
         $entityManagerInterface->persist($course);
@@ -88,11 +93,8 @@ class CourseController extends AbstractController
     }
 
     #[Route('/api/course/{id}', name: 'course.delete', methods: ['DELETE'])]
-    public function deleteCourse(?Course $course, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function deleteCourse(Course $course, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
-        if (!$course) {
-            return new JsonResponse(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
-        }
         $entityManagerInterface->remove($course);
         $entityManagerInterface->flush();
         $cache->invalidateTags(['getAllCourseCache']);

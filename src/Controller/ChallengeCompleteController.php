@@ -16,6 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
@@ -44,13 +45,18 @@ class ChallengeCompleteController extends AbstractController
     }
 
     #[Route('/api/challenge/complete', name: 'challenge.complete.create', methods: ['POST'])]
-    public function createChallengeComplete(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, UrlGeneratorInterface $urlGenerator, TagAwareCacheInterface $cache): JsonResponse
+    public function createChallengeComplete(Request $request, ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, UrlGeneratorInterface $urlGenerator, TagAwareCacheInterface $cache): JsonResponse
     {
-        $body = $request->toArray();
         $challengeComplete = $serializer->deserialize($request->getContent(), ChallengeComplete::class, 'json');
+        $errors = $validator->validate($challengeComplete);
+        if ($errors->count()) {
+            return new JsonResponse($serializer->serialize($errors, 'json'), Response::HTTP_UNPROCESSABLE_ENTITY, [], true);
+        }
+        
         $date = new \DateTime();
         $challengeComplete->setCreatedAt($date)->setUpdatedAt($date);
-
+        
+        $body = $request->toArray();
         $technologie = $entityManagerInterface->getRepository(Technologie::class)->find($body['technologie']);
         if (!$technologie) {
             return new JsonResponse(['error' => 'Technologie not found'], Response::HTTP_BAD_REQUEST);
@@ -67,16 +73,21 @@ class ChallengeCompleteController extends AbstractController
         $entityManagerInterface->persist($challengeComplete);
         $entityManagerInterface->flush();
         $location = $urlGenerator->generate('challenge.complete.show', ['id' => $challengeComplete->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
-        $json = $serializer->serialize($challengeComplete, 'json');
+        $json = $serializer->serialize($challengeComplete, 'json', ['groups' => 'challengeComplete']);
         $cache->invalidateTags(['getAllChallengeCompleteCache']);
 
         return new JsonResponse($json, Response::HTTP_CREATED, ['Location' => $location], true);
     }
 
     #[Route('api/challenge/complete/{id}', name: 'challenge.complete.update', methods: ['PUT'])]
-    public function updateChallengeComplete(ChallengeComplete $challengeComplete, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    public function updateChallengeComplete(ChallengeComplete $challengeComplete, ValidatorInterface $validator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
         $technologie = $serializer->deserialize($request->getContent(), ChallengeComplete::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $challengeComplete]);
+        $errors = $validator->validate($challengeComplete);
+        if ($errors->count()) {
+            return new JsonResponse($serializer->serialize($errors, 'json'), Response::HTTP_UNPROCESSABLE_ENTITY, [], true);
+        }
+
         $date = new \DateTime();
         $technologie->setUpdatedAt($date);
         $entityManagerInterface->persist($technologie);

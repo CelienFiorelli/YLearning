@@ -6,6 +6,7 @@ use App\Repository\ChallengeReviewRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ChallengeReviewRepository::class)]
 class ChallengeReview
@@ -18,14 +19,18 @@ class ChallengeReview
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["review"])]
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
     private ?string $comment = null;
 
     #[ORM\Column]
     #[Groups(["review"])]
+    #[Assert\Type('boolean')]
     private ?bool $needRevaluation = null;
 
     #[ORM\OneToOne(inversedBy: 'challengeReview', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank]
     private ?ChallengeComplete $challengeComplete = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
