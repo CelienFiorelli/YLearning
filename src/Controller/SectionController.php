@@ -43,6 +43,20 @@ class SectionController extends AbstractController
         return new JsonResponse($json, 200, [], true);
     }
 
+    #[Route('/api/course/{id}/sections', name: 'sections_by_course', methods: ['GET'])]
+    public function sectionsByCourse(int $id, Course $course, SectionRepository $repository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
+    {
+        $cacheKey = "get:all:sections:" . $id;
+        $json = $cache->get($cacheKey, function (ItemInterface $item) use ($serializer, $repository, $course) {
+            $item->tag('getAllSectionsCache');
+            $sections = $repository->findBy(['course' => $course]);
+
+            return $serializer->serialize($sections, 'json', ['groups' => 'section']);
+        });
+
+        return new JsonResponse($json, 200, [], true);
+    }
+
     #[Route('/api/section', name: 'section.create', methods: ['POST'])]
     public function createSection(Request $request, ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, UrlGeneratorInterface $urlGenerator, TagAwareCacheInterface $cache): JsonResponse
     {

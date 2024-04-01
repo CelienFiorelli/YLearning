@@ -17,11 +17,11 @@ class Course
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["course"])]
+    #[Groups(["course", "section"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["course"])]
+    #[Groups(["course", "section"])]
     #[Assert\NotBlank]
     #[Assert\Type('string')]
     private ?string $title = null;
