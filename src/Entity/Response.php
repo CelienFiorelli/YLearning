@@ -14,17 +14,16 @@ class Response
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["response"])]
+    #[Groups(["response", "section"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 128)]
-    #[Groups(["response"])]
     #[Assert\NotBlank]
-    #[Assert\Type('string')]
+    #[Groups(["response", "section"])]
     private ?string $content = null;
 
     #[ORM\Column]
-    #[Groups(["response"])]
+    #[Groups(["response", "section"])]
     #[Assert\NotBlank]
     #[Assert\Type('boolean')]
     private ?bool $isValid = null;
