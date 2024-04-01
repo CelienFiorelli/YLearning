@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Challenge;
 use App\Entity\ChallengeComplete;
 use App\Entity\Technologie;
+use App\Repository\ChallengeCompleteRepository;
 use App\Repository\ChallengeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -23,7 +24,7 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 class ChallengeCompleteController extends AbstractController
 {
     #[Route('/api/challenge/complete', name: 'challenge.complete.all', methods: ['GET'])]
-    public function getAll(ChallengeRepository $repository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
+    public function getAll(ChallengeCompleteRepository $repository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
         $cacheKey = "get:all:challenge:complete";
         $json = $cache->get($cacheKey, function (ItemInterface $item) use ($serializer, $repository) {
