@@ -33,6 +33,20 @@ class ResponseController extends AbstractController
         return new JsonResponse($json, 200, [], true);
     }
 
+    #[Route('/api/section/{id}/responses', name: 'section.response', methods: ['GET'])]
+    public function responseBySections(Section $section, ResponseRepository $repository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
+    {
+        $cacheKey = "get:specific:response:";
+        $json = $cache->get($cacheKey, function (ItemInterface $item) use ($serializer, $repository, $section) {
+            $item->tag('getAllSectionsCache');
+            $sections = $repository->findBy(['section' => $section]);
+
+            return $serializer->serialize($sections, 'json', ['groups' => 'response']);
+        });
+
+        return new JsonResponse($json, 200, [], true);
+    }
+
     #[Route('/api/response', name: 'response.create', methods: ['POST'])]
     public function createResponse(Request $request, ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, UrlGeneratorInterface $urlGenerator, TagAwareCacheInterface $cache): JsonResponse
     {
