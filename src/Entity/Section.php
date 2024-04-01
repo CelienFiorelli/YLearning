@@ -27,7 +27,7 @@ class Section
     private ?string $type = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(["section", "response"])]
+    #[Groups(["section"])]
     #[Assert\NotBlank]
     #[Assert\Type('string')]
     private ?string $content = null;
