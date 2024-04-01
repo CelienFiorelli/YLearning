@@ -6,14 +6,12 @@ use App\Entity\Persona;
 use App\Entity\User;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Hateoas\UrlGenerator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class AuthController extends AbstractController
 {
@@ -41,6 +39,6 @@ class AuthController extends AbstractController
 
         $manager->flush();
 
-        return new JsonResponse(null, Response::HTTP_CREATED, [], true);
+        return new JsonResponse(null, Response::HTTP_CREATED, []);
     }
 }

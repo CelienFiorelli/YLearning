@@ -6,7 +6,6 @@ use App\Entity\Challenge;
 use App\Entity\ChallengeComplete;
 use App\Entity\Technologie;
 use App\Repository\ChallengeCompleteRepository;
-use App\Repository\ChallengeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
