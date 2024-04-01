@@ -13,6 +13,12 @@
 
 - Utiliser les seeders pour la base de donnée `php bin/console doctrine:fixtures:load`
 
+- Créer le dossier `jwt` dans `/config` puis faire les commandes suivante :
+```bash
+openssl genpkey -out config/jwt/private.pem -aes256 -algorithm rsa -pkeyopt rsa_keygen_bits:4096
+openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem -pubout
+```
+
 - Lancer le projet avec `symfony serve` à la racine du projet
 
 
