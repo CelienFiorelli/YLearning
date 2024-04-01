@@ -13,6 +13,15 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
 {
+    #[Route('/api/user', name: 'user.show', methods: ['GET'])]
+    public function show(SerializerInterface $serializer): JsonResponse
+    {
+        $user = $this->getUser();
+        $json = $serializer->serialize($user, 'json', ['groups' => 'user']);
+
+        return new JsonResponse($json, 200, [], true);
+    }
+
     #[Route('/api/user/{id}/ability', name: 'user.ability.all', methods: ['GET'])]
     #[ParamConverter("user")]
     public function getUserAvailabilies(User $user, SerializerInterface $serializer): JsonResponse
