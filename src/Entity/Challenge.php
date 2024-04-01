@@ -16,11 +16,11 @@ class Challenge
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["challenge", "userChallenge"])]
+    #[Groups(["challenge", "userChallenge", "challengeComplete"])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(["challenge", "userChallenge"])]
+    #[Groups(["challenge", "userChallenge", "challengeComplete"])]
     #[Assert\NotBlank]
     private ?string $description = null;
 
@@ -41,7 +41,6 @@ class Challenge
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: ChallengeComplete::class)]
-    #[Groups(["challenge"])]
     private Collection $challengeCompletes;
 
     public function __construct()

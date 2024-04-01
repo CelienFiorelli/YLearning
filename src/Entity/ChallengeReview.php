@@ -30,6 +30,7 @@ class ChallengeReview
 
     #[ORM\OneToOne(inversedBy: 'challengeReview', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["review"])]
     #[Assert\NotBlank]
     private ?ChallengeComplete $challengeComplete = null;
 

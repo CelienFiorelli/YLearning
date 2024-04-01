@@ -19,7 +19,7 @@ class ChallengeComplete
     
     #[ORM\ManyToOne(inversedBy: 'challengeCompletes')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["userChallenge", "review"])]
+    #[Groups(["userChallenge", "review", "challengeComplete"])]
     #[Assert\NotBlank]
     private ?Challenge $challenge = null;
 
@@ -39,6 +39,7 @@ class ChallengeComplete
 
     #[ORM\ManyToOne(inversedBy: 'challengeCompletes')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["review"])]
     private ?User $user = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
