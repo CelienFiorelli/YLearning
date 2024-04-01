@@ -16,7 +16,7 @@ class Section
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["section", "response"])]
+    #[Groups(["section"])]
 
     private ?int $id = null;
 
@@ -34,7 +34,7 @@ class Section
 
     #[ORM\ManyToOne(inversedBy: 'sections')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["section"])]
+    #[Groups(["section", "response"])]
     #[Assert\NotBlank]
     private ?Course $course = null;
 
@@ -53,6 +53,7 @@ class Section
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'section', targetEntity: Response::class)]
+    #[Groups(["section"])]
     private Collection $responses;
 
     public function __construct()
